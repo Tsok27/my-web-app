@@ -5,17 +5,23 @@ import plotly.express as px
 # Load data
 @st.cache_data
 def load_data():
-    df = pd.read_csv('data/vehicles_us_cleaned.csv')
-    
-    # Convert all possible numeric columns
-    numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
-    for col in numeric_cols:
-        if df[col].isnull().any():  # Check for nulls
-            df[col] = df[col].astype('float32')  # Use float if nulls exist
-        else:
-            df[col] = df[col].astype('int32')
-    
-    return df
+    try:
+        df = pd.read_csv('data/vehicles_us_cleaned.csv')
+        
+        # Convert date columns if any exist
+        date_columns = ['date_posted', 'model_year']  # Adjust based on your data
+        for col in date_columns:
+            if col in df.columns:
+                df[col] = pd.to_datetime(df[col], errors='coerce')
+        
+        # More efficient numeric conversion
+        for col in df.select_dtypes(include=['number']).columns:
+            df[col] = pd.to_numeric(df[col], downcast='integer', errors='ignore')
+            
+        return df
+    except FileNotFoundError:
+        st.error("Data file not found. Please check the path.")
+        return pd.DataFrame()
 
 df = load_data()
 
