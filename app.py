@@ -42,5 +42,5 @@ st.plotly_chart(scatter_fig, use_container_width=True)
 
 # Data table toggle
 if st.checkbox('Show raw data'):
-    st.dataframe(df.head(100))
+    st.dataframe(df.head(100).astype(str))
 
