@@ -5,7 +5,13 @@ import plotly.express as px
 # Load data
 @st.cache_data
 def load_data():
-    return pd.read_csv('data/vehicles_us_cleaned.csv')
+    df = pd.read_csv('data/vehicles_us_cleaned.csv')
+    
+    # Clean numeric columns
+    num_cols = ['price', 'odometer', 'model_year']
+    df[num_cols] = df[num_cols].fillna(0).astype('int32')
+    
+    return df
 
 df = load_data()
 
@@ -42,5 +48,5 @@ st.plotly_chart(scatter_fig, use_container_width=True)
 
 # Data table toggle
 if st.checkbox('Show raw data'):
-    st.dataframe(df.head(100).astype(str))
+    st.dataframe(df.head(100))
 
