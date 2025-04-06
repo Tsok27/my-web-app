@@ -7,9 +7,13 @@ import plotly.express as px
 def load_data():
     df = pd.read_csv('data/vehicles_us_cleaned.csv')
     
-    # Clean numeric columns
-    num_cols = ['price', 'odometer', 'model_year']
-    df[num_cols] = df[num_cols].fillna(0).astype('int32')
+    # Convert all possible numeric columns
+    numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    for col in numeric_cols:
+        if df[col].isnull().any():  # Check for nulls
+            df[col] = df[col].astype('float32')  # Use float if nulls exist
+        else:
+            df[col] = df[col].astype('int32')
     
     return df
 
